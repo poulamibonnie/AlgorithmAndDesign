@@ -11,21 +11,11 @@ class Entity {
     private:
         string name;
         int match;
-    public:
-        
-
-};
-
-class Person {
-    private:
-        string name;
-        queue<int> preferences;
-        int match;
     
     public:
-        Person(){};
+        Entity() {}
 
-        Person(string name) {
+        Entity(string name) {
             setName(name);
             setMatch(-1);
         }
@@ -37,6 +27,24 @@ class Person {
         void setName(string name) {
             this->name = name;
         }
+
+        int getMatch() {
+            return this->match;
+        }  
+
+        void setMatch(int pet) {
+            this->match = pet;
+        }
+};
+
+class Person : public Entity {
+    private:
+        queue<int> preferences;
+        
+    public:
+        Person(){}
+
+        Person(string name) : Entity(name) {}
 
         queue<int> getPreference() {
             return this->preferences;
@@ -52,14 +60,6 @@ class Person {
             }
         }  
 
-        int getMatch() {
-            return this->match;
-        }  
-
-        void setMatch( int pet ) {
-            this->match = pet;
-        }
-
         int getTopPreference() {
             //No new pet to propose
             if(preferences.empty()) {
@@ -73,44 +73,20 @@ class Person {
 };
 
 
-class Pet {
+class Pet : public Entity {
     private:
-        string name;
         vector<int> revIdxPrefList;
-        int match;
     
     public:
         Pet(){}
 
-        Pet(string name) {
-            setName(name);
-            setMatch(-1);
-        }
-
-        string getName() {
-            return this->name;
-        }
-
-        void setName(string name) {
-            this->name = name;
-        }
-
-        int getMatch() {
-            return this->match;
-        }  
-
-        void setMatch( int human ) {
-            this->match = human;
-        }  
+        Pet(string name) : Entity(name) {}
 
         int getRevIdxPreference(int idx) {
             return this->revIdxPrefList[idx];
         }
 
         void setRevIdxPreference(string prefList, int size) {
-
-            //Split operation is repeatetive may be we create a split function ??
-
             this->revIdxPrefList.resize(size + 1, -1);
             stringstream ss(prefList);
             string pref;
@@ -134,91 +110,160 @@ string getCleanseString(string str) {
     return cleanseStr;
 }
 
-int main() {
-    ifstream inputFile("program1data.txt");
-    string myText;
+class StableMatching {
+    private:
+        vector<Person> optimals;
+        vector<Pet> pessimals;
+        int entitySize; 
 
-    int loopCounter = 0;
-    int setSize = 0;
-    vector<Person> people;
-    vector<Pet> animals;
+    public:
+        StableMatching() {
+            this->entitySize = 0;
+        }
 
-    if (inputFile.is_open()) {
-        while (getline (inputFile, myText)) {
-            if(loopCounter == 0) {
-                setSize = stoi(myText);
+        void setOptimals(vector<Person> optimals) {
+            this->optimals = optimals;
+        }
+
+        vector<Person> getOptimals() {
+            return this->optimals;
+        }
+        
+        void setPessimals(vector<Pet> pessimals) {
+            this->pessimals = pessimals;
+        }
+
+        vector<Pet> getPessimals() {
+            return this->pessimals;
+        }
+
+        void solver() {
+            entitySize = optimals.size();
+            int currIdx = 0;
+            int nextIdx = -1;
+            int matchFound = 0;
+            
+            while(matchFound != entitySize) {
+                int petProposed = this->optimals[currIdx].getTopPreference();
+
+
+                if(petProposed == -1) {
+                    std::cerr << "Validate input files, all the pets proposed but all person didnot find match!" << std::endl;
+                    return;
+                }
+
+                int petIdx = petProposed - 1;
+                if(this->pessimals[petIdx].getMatch() == -1) {
+                    //Pet accepts proposal
+                    this->optimals[currIdx].setMatch(petIdx + 1);
+                    this->pessimals[petIdx].setMatch(currIdx + 1);
+                    matchFound++;
+                } 
+                else {
+                    
+                    int matchedPet = this->pessimals[petIdx].getMatch();
+                    int prefIdxCurrMatch = this->pessimals[petIdx].getRevIdxPreference(matchedPet);
+                    int prefIdxNewMatch = this->pessimals[petIdx].getRevIdxPreference(currIdx + 1);
+                    
+                    if(prefIdxNewMatch < prefIdxCurrMatch) { //For trade up
+                        this->optimals[currIdx].setMatch(petIdx + 1);
+                        this->pessimals[petIdx].setMatch(currIdx + 1);
+                        this->optimals[matchedPet - 1].setMatch(-1);
+                        nextIdx = currIdx + 1;
+                        currIdx = matchedPet - 1;
+                        continue;
+                    }
+                    else {
+                        continue;    //Pet rejects proposal
+                    } 
+                }
+
+                currIdx = (nextIdx == -1) ? currIdx + 1 : nextIdx;
             }
-            else if (loopCounter >= 1 && loopCounter <= setSize){
-                Person newPerson = Person(getCleanseString(myText));
-                people.push_back(newPerson);
+            
+        }
+
+        void printStableMatch() {
+            for(int i = 0; i < this->entitySize; i++) {
+                string res = this->optimals[i].getName() + " / "  +  this->pessimals[ this->optimals[i].getMatch() -1].getName();
+                cout<<res<<endl;
+
             }
-            else if(loopCounter >= setSize + 1 && loopCounter <= (setSize * 2)) {
-                people[ loopCounter - setSize - 1 ].setPreference(myText);
-            }
-            else if(loopCounter >= (setSize * 2) + 1 && loopCounter <= (setSize * 3)) {
-                Pet newPet = Pet(getCleanseString(myText));
-                animals.push_back(newPet);
+        }
+
+};
+
+class DataReader { 
+    private:
+        vector<Person> people;
+        vector<Pet> animals;
+        int entitySize;
+
+    public:
+        DataReader() {
+            entitySize = 0;
+        }
+
+        vector<Person> getPeople() {
+            return this->people;
+        }
+
+        vector<Pet> getAnimals() {
+            return this->animals;
+        }
+
+        int getEntitySize() {
+            return this->entitySize;
+        }
+
+        void fileRead(string filename) {
+            ifstream inputFile(filename);
+            string myText;
+
+            int loopCounter = 0;
+    
+            if (inputFile.is_open()) {
+                while (getline (inputFile, myText)) {
+                    if(loopCounter == 0) {
+                        entitySize = stoi(myText);
+                    }
+                    else if (loopCounter >= 1 && loopCounter <= entitySize){
+                        Person newPerson = Person(getCleanseString(myText));
+                        people.push_back(newPerson);
+                    }
+                    else if(loopCounter >= entitySize + 1 && loopCounter <= (entitySize * 2)) {
+                        people[ loopCounter - entitySize - 1 ].setPreference(myText);
+                    }
+                    else if(loopCounter >= (entitySize * 2) + 1 && loopCounter <= (entitySize * 3)) {
+                        Pet newPet = Pet(getCleanseString(myText));
+                        animals.push_back(newPet);
+                    }
+                    else{
+                        animals[ loopCounter - (3 * entitySize) - 1 ].setRevIdxPreference(myText, entitySize);
+                    }
+                    loopCounter++;
+                }
+                inputFile.close();
             }
             else{
-                animals[ loopCounter - (3 * setSize) - 1 ].setRevIdxPreference(myText, setSize);
+                std::cerr << "Error opening the file." << std::endl;
+                return;
             }
-            loopCounter++;
-        }
-        inputFile.close();
-    }
-    else{
-        std::cerr << "Error opening the file." << std::endl;
-        return -1;
-    }
-    
-    int currIdx = 0;
-    int nextIdx = -1;
-    int matchFound = 0;
-
-
-    while(matchFound != setSize) {
-        int petProposed = people[currIdx].getTopPreference();
-
-
-        if(petProposed == -1) {
-            std::cerr << "Validate input files, all the pets proposed but all person didnot find match!" << std::endl;
-            return -1;
-        }
-
-        int petIdx = petProposed - 1;
-        if(animals[petIdx].getMatch() == -1) {
-            //Pet accepts proposal
-            people[currIdx].setMatch(petIdx + 1);
-            animals[petIdx].setMatch(currIdx + 1);
-            matchFound++;
-        } 
-        else {
-            
-            int matchedPet = animals[petIdx].getMatch();
-            int prefIdxCurrMatch = animals[petIdx].getRevIdxPreference(matchedPet);
-            int prefIdxNewMatch = animals[petIdx].getRevIdxPreference(currIdx + 1);
-            
-            if(prefIdxNewMatch < prefIdxCurrMatch) { //For trade up
-                people[currIdx].setMatch(petIdx + 1);
-                animals[petIdx].setMatch(currIdx + 1);
-                people[matchedPet - 1].setMatch(-1);
-                nextIdx = currIdx + 1;
-                currIdx = matchedPet - 1;
-                continue;
-            }
-            else {
-                continue;    //Pet rejects proposal
-            } 
-        }
-
-        currIdx = (nextIdx == -1) ? currIdx + 1 : nextIdx;
     }
 
-    for(int i = 0; i < people.size(); i++) {
-        string res = people[i].getName() + " / "  +  animals[ people[i].getMatch() -1].getName();
-        cout<<res<<endl;
+};
 
-    }
+int main() {
+    DataReader reader;
+    reader.fileRead("program1data.txt");
+
+    StableMatching matcher;
+    matcher.setOptimals(reader.getPeople());
+    matcher.setPessimals(reader.getAnimals());
+
+    matcher.solver();
+    matcher.printStableMatch();
 
     return 0;
 }
+
