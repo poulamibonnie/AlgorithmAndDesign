@@ -42,7 +42,7 @@ void DataReader::fileRead(string filename) {
                 firstParty.push_back(firstPartyMember);
             }
             else if(loopCounter >= entitySize + 1 && loopCounter <= (entitySize * 2)) {
-                firstParty[ loopCounter - entitySize - 1 ].setPreference(myText);
+                firstParty[ loopCounter - entitySize - 1 ].setPreference(myText, entitySize);
             }
             else if(loopCounter >= (entitySize * 2) + 1 && loopCounter <= (entitySize * 3)) {
                 Pet secondPartyMember = Pet(getCleanseString(myText));

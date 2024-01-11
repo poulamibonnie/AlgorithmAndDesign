@@ -43,7 +43,7 @@ class Person : public Entity {
 //Output: New object is created with name as input string and match as -1 
 //        indicating no item matched
   
-        Person(string name);
+        Person(const string &name);
 
 //-------------------------- getPreference() -----------------------------------//
 //Output the prefrerence queue of an object(Person)
@@ -54,10 +54,11 @@ class Person : public Entity {
 
 //-------------------------- setPreference(prefList) -----------------------------------//
 //Set the preference queue for an object(Person)
-//Input: string containing the preference list
+//Input: (1) String containing the preference list
+//       (2) Number of Pet/Person
 //Output: None 
 
-        void setPreference(const string &prefList);
+        void setPreference(const string &prefList, int &size);
 
 //-------------------------- getTopPreference() -----------------------------------//
 //Outputs the top preference of pet

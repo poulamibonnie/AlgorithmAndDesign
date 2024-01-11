@@ -24,7 +24,7 @@
 //Output: New object is created with name as input string and match as -1 
 //        indicating no item matched
 
-Person::Person(string name) : Entity(name) {};
+Person::Person(const string &name) : Entity(name) {};
 
 //-------------------------- getPreference() -----------------------------------//
 //Output the prefrerence queue of an object(Person)
@@ -37,17 +37,21 @@ queue<int> Person::getPreference() {
 
 //-------------------------- setPreference(prefList) -----------------------------------//
 //Set the preference queue for an object(Person)
-//Input: string containing the preference list
+//Input: (1) String containing the preference list
+//       (2) Number of Pet/Person
 //Output: None 
 
-void Person::setPreference(const string &prefList) {
+void Person::setPreference(const string &prefList, int &size) {
     stringstream ss(prefList);
     string pref;
-    
+    int counter = 0;
+
     // Extract space seperated number through tokenization
     while (ss >> pref) 
     {
+        counter++;
         try {
+            //Assigning preference
             this->preferences.push(stoi(pref));
         }
         catch (const std::invalid_argument & e) {
@@ -59,6 +63,12 @@ void Person::setPreference(const string &prefList) {
             exit(0);
         }
     }
+
+    if(counter != size) {
+        std::cout <<"Error: Person's Preference List Size Incorrect." << endl; 
+        exit(0);
+    }
+
 }  
 
 //-------------------------- getTopPreference() -----------------------------------//
