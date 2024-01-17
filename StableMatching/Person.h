@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 // PERSON.H
 // Declare members exclusive to Person class.
-// Authors: Poulami Das Ghosh
+// Author(s): Poulami Das Ghosh
 //---------------------------------------------------------------------------
 // Person class:  This is a derived class to Entity and stores the preference
 //   queue of an object(Person). It includes the following features:
@@ -32,38 +32,40 @@ class Person : public Entity {
     public:
 //-------------------------- Constructor -----------------------------------//
 //Default Constructor for the class Person
-//Input: None
-//Output: New object is created
+// Preconditions: None
+// Postconditions: New object is created
         Person(){}
 
 //-------------------------- Constructor -----------------------------------//
 //Parametrized Constructor for the class Person. It inherits all the public 
 //members of Entity class.
-//Input: Valid string containing the name of the object is provided as input.
-//Output: New object is created with name as input string and match as -1 
+// Preconditions: Valid string containing the name of the object is provided as input.
+// Postconditions: New object is created with name as input string and match as -1 
 //        indicating no item matched
   
         Person(const string &name);
 
 //-------------------------- getPreference() -----------------------------------//
 //Output the prefrerence queue of an object(Person)
-//Input: None
-//Output: Returns integer queue containing the preference list of the object(Person)
+// Preconditions: None
+// Postconditions: Returns integer queue containing the preference list of the object(Person)
 
         queue<int> getPreference();
 
-//-------------------------- setPreference(prefList) -----------------------------------//
-//Set the preference queue for an object(Person)
-//Input: (1) String containing the preference list
-//       (2) Number of Pet/Person
-//Output: None 
+//-------------------------- setPreference-----------------------------------//
+// Set the preference queue for an object(Person)
+// Preconditions:  A valid integer 'size' is received indicating the number 
+//                 of Person
+// Postconditions: Insert into the queue in order of preference. If the  
+//                 preference list cannot be constructed from the queue crash
+//                 the program. 
 
-        void setPreference(const string &prefList, int &size);
+        void setPreference(const string &prefList, const int &size);
 
-//-------------------------- getTopPreference() -----------------------------------//
+//-------------------------- getTopPreference---------------------------------//
 //Outputs the top preference of pet
-//Input: None
-//Output: returns the index of the top pet prefered 
+// Preconditions: None
+// Postconditions: returns the index of the top pet prefered 
 
         int getTopPreference();
 

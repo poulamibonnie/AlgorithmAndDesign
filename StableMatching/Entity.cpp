@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 // ENTITY.CPP
 // Member function definitions for class Entity
-// Authors: Poulami Das Ghosh
+// Author(s): Poulami Das Ghosh
 //---------------------------------------------------------------------------
 // Entity class:  This is the parent class of Pet and Person
 //   it includes the following features:
@@ -21,48 +21,65 @@
 #include "Entity.h"
 
 //-------------------------- Constructor -----------------------------------//
-//Parametrized Constructor for the class Entity
-//Input: Valid string containing the name of the object is provided as input.
-//Output: New object is created with name as input string and match as -1 
-//        indicating no item matched
+//Default Constructor for the class Entity
+// Preconditions:  None
+// Postconditions: New object is created and name is initialized as blank and 
+//        match is set as -1 
 
-Entity::Entity(const string &name) {
-    setName(name);
+Entity::Entity()
+{
+    setName("");
+    setMatch(-1);
+}
+
+//-------------------------- Constructor -----------------------------------//
+// Parametrized Constructor for the class Entity
+// Preconditions: Valid string containing the name of the object is
+//                provided as input.
+// Postconditions: New object is created with name as input string and match 
+//                 as -1 indicating no item matched
+
+Entity::Entity(const string &_name)
+{
+    setName(_name);
     setMatch(-1);
 }
 
 //-------------------------- Getter Method -----------------------------------//
-//Getter method 'getName' to return the name of the entity(Pet/Person)
-//Input: None
-//Output: Returns the name of the entity(Pet/Person)
+// Getter method 'getName' to return the name of the entity(Pet/Person)
+// Preconditions:  None
+// Postconditions: Returns the name of the entity(Pet/Person)
 
 string Entity::getName() {
     return this->name;
 }
 
 //-------------------------- Setter Method -----------------------------------//
-//Setter method 'setName' to set the name of the entity(Pet/Person)
-//Input: Valid string containing the name of the object is provided as input.
-//Output: None
+// Setter method 'setName' to set the name of the entity(Pet/Person)
+// Preconditions:  Valid string containing the name of the object is provided as
+//                 input.
+// Postconditions: None
 
-void Entity::setName(const string &name) {
-    this->name = name;
+void Entity::setName(const string &_name) {
+    this->name = _name;
+    return;
 }
 
 //-------------------------- Getter Method -----------------------------------//
-//Getter method 'getMatch' to return the matched item of the entity(Pet/Person)
-//Input: None
-//Output: Returns the index of the matched item of the entity(Pet/Person)
+// Getter method 'getMatch' to return the matched item of the entity(Pet/Person)
+// Preconditions:  None
+// Postconditions: Returns the index of the matched item of the entity(Pet/Person)
 
 int Entity::getMatch() {
     return this->match;
 }  
 
 //-------------------------- Setter Method -----------------------------------//
-//setter method 'setMatch' to set the match for the entity(Pet/Person)
-//Input: Valid integer containing the index of the matched item.
-//Output: None
+// Setter method 'setMatch' to set the match for the entity(Pet/Person)
+// Preconditions:  Valid integer containing the index of the matched item.
+// Postconditions: None
 
 void Entity::setMatch(const int &matchedIdx) {
     this->match = matchedIdx;
+    return;
 }
